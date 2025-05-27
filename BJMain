@@ -3,105 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blackjack Helper Game - Interactive Audio Demo</title>
+    <title>Simplified Blackjack Helper - Audio Output Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            overscroll-behavior-y: none; /* Prevents pull-to-refresh on mobile */
-            background-color: #065f46; /* emerald-800 for a slightly darker overall page background */
-            color: #d1fae5; /* emerald-100 for default text */
+            overscroll-behavior-y: none;
+            background-color: #065f46; 
+            color: #d1fae5; 
         }
         .card {
-            width: 70px;
-            height: 100px;
-            border: 1px solid #4a5568; /* gray-700 */
-            border-radius: 0.375rem; /* rounded-md */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-weight: bold;
-            font-size: 1.125rem; /* text-lg */
+            width: 70px; height: 100px; border: 1px solid #4a5568;
+            border-radius: 0.375rem; display: flex; flex-direction: column;
+            justify-content: space-between; align-items: center; padding: 0.5rem;
+            background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-weight: bold; font-size: 1.125rem; 
         }
-        .card.red { color: #dc2626; /* red-600 */ }
-        .card.black { color: #1f2937; /* gray-800 */ }
+        .card.red { color: #dc2626; } .card.black { color: #1f2937; }
         .card-value-top { align-self: flex-start; }
-        .card-suit { font-size: 1.75rem; /* text-3xl */ }
+        .card-suit { font-size: 1.75rem; }
         .card-value-bottom { align-self: flex-end; transform: rotate(180deg); }
         .hidden-card {
-            background-color: #4b5563; /* gray-700 adjusted */
-            background-image: repeating-linear-gradient(
-                45deg,
-                #374151, /* gray-800 adjusted */
-                #374151 10px,
-                #4b5563 10px,
-                #4b5563 20px
-            );
-            border: 1px dashed #9ca3af; /* gray-400 */
+            background-color: #4b5563;
+            background-image: repeating-linear-gradient(45deg, #374151, #374151 10px, #4b5563 10px, #4b5563 20px);
+            border: 1px dashed #9ca3af;
         }
         .game-button {
-            transition: all 0.15s ease-in-out;
-            border-radius: 0.5rem; /* rounded-lg */
-            padding: 0.75rem 1.25rem; /* py-3 px-5 */
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.15s ease-in-out; border-radius: 0.5rem; 
+            padding: 0.6rem 1rem; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 0.05em; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 0.9rem; /* Slightly smaller buttons */
         }
-        .game-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .game-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
+        .game-button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .game-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* Modal styles */
         .modal {
-            display: none; position: fixed; z-index: 100;
-            left: 0; top: 0; width: 100%; height: 100%;
-            overflow: auto; background-color: rgba(0,0,0,0.7);
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; 
+            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);
             backdrop-filter: blur(3px);
         }
         .modal-content {
-            background-color: #f0fdf4; /* green-50, lighter for modal */
-            color: #1f2937; /* gray-800 for modal text */
-            margin: 8% auto; padding: 25px;
-            border: 1px solid #059669; /* emerald-600 */
-            width: 90%; max-width: 550px;
-            border-radius: 0.75rem; /* rounded-xl */
-            position: relative;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            background-color: #f0fdf4; color: #1f2937; margin: 8% auto; padding: 25px;
+            border: 1px solid #059669; width: 90%; max-width: 550px;
+            border-radius: 0.75rem; position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
         .modal-close-button {
-            color: #4b5563; /* gray-600 */
-            float: right; font-size: 30px; font-weight: bold;
-            position: absolute; top: 10px; right: 20px;
-            transition: color 0.2s ease;
+            color: #4b5563; float: right; font-size: 30px; font-weight: bold;
+            position: absolute; top: 10px; right: 20px; transition: color 0.2s ease;
         }
-        .modal-close-button:hover, .modal-close-button:focus {
-            color: #ef4444; /* red-500 for close hover */
-            text-decoration: none; cursor: pointer;
-        }
+        .modal-close-button:hover, .modal-close-button:focus { color: #ef4444; text-decoration: none; cursor: pointer; }
         .gemini-explanation-content p { margin-bottom: 0.75rem; line-height: 1.6; }
-        .gemini-explanation-content strong { color: #047857; /* emerald-700 */ }
+        .gemini-explanation-content strong { color: #047857; }
         .loader {
-            border: 5px solid #d1d5db; /* gray-300 */
-            border-top: 5px solid #059669; /* emerald-600 */
+            border: 5px solid #d1d5db; border-top: 5px solid #059669;
             border-radius: 50%; width: 40px; height: 40px;
             animation: spin 1s linear infinite; margin: 20px auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .gemini-explanation-content {
-            max-height: 60vh; overflow-y: auto; padding-right: 10px; /* space for scrollbar */
-        }
+        .gemini-explanation-content { max-height: 60vh; overflow-y: auto; padding-right: 10px; }
         .gemini-explanation-content::-webkit-scrollbar { width: 8px; }
         .gemini-explanation-content::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 4px;}
         .gemini-explanation-content::-webkit-scrollbar-thumb { background: #059669; border-radius: 4px;}
@@ -109,89 +68,77 @@
 
         .chip {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 45px; height: 45px; /* Slightly smaller */
-            border-radius: 50%;
+            width: 45px; height: 45px; border-radius: 50%;
             font-weight: bold; color: white; margin: 4px; cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 -2px 2px rgba(0,0,0,0.2);
-            transition: all 0.15s ease-in-out;
-            border: 2px solid rgba(255,255,255,0.5);
-            font-size: 0.875rem; /* text-sm */
+            transition: all 0.15s ease-in-out; border: 2px solid rgba(255,255,255,0.5);
+            font-size: 0.875rem;
         }
         .chip:hover { transform: scale(1.1) translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 -2px 2px rgba(0,0,0,0.2); }
-        .chip-1 { background-color: #ef4444; /* red-500 */ }
-        .chip-5 { background-color: #3b82f6; /* blue-500 */ }
-        .chip-10 { background-color: #10b981; /* emerald-500 */ }
-        .chip-25 { background-color: #8b5cf6; /* violet-500 */ }
-        .chip-100 { background-color: #f59e0b; /* amber-500 */ }
+        .chip-1 { background-color: #ef4444; } .chip-5 { background-color: #3b82f6; }
+        .chip-10 { background-color: #10b981; } .chip-25 { background-color: #8b5cf6; }
+        .chip-100 { background-color: #f59e0b; }
 
-        /* Button specific colors */
-        .bg-green-custom { background-color: #10b981; } /* emerald-500 */
-        .hover\:bg-green-custom-hover:hover { background-color: #059669; } /* emerald-600 */
-        .bg-blue-custom { background-color: #3b82f6; } /* blue-500 */
-        .hover\:bg-blue-custom-hover:hover { background-color: #2563eb; } /* blue-600 */
-        .bg-red-custom { background-color: #ef4444; } /* red-500 */
-        .hover\:bg-red-custom-hover:hover { background-color: #dc2626; } /* red-600 */
-        .bg-yellow-custom { background-color: #f59e0b; color: #1f2937; } /* amber-500, black text */
-        .hover\:bg-yellow-custom-hover:hover { background-color: #d97706; } /* amber-600 */
-        .bg-teal-custom { background-color: #14b8a6; } /* teal-500 */
-        .hover\:bg-teal-custom-hover:hover { background-color: #0d9488; } /* teal-600 */
-        .bg-orange-custom { background-color: #f97316; } /* orange-500 */
-        .hover\:bg-orange-custom-hover:hover { background-color: #ea580c; } /* orange-600 */
-        .bg-sky-custom { background-color: #0ea5e9; } /* sky-500 */
-        .hover\:bg-sky-custom-hover:hover { background-color: #0284c7; } /* sky-600 */
-
+        .bg-green-custom { background-color: #10b981; } 
+        .hover\:bg-green-custom-hover:hover { background-color: #059669; }
+        .bg-blue-custom { background-color: #3b82f6; }
+        .hover\:bg-blue-custom-hover:hover { background-color: #2563eb; }
+        .bg-red-custom { background-color: #ef4444; }
+        .hover\:bg-red-custom-hover:hover { background-color: #dc2626; }
+        .bg-yellow-custom { background-color: #f59e0b; color: #1f2937; }
+        .hover\:bg-yellow-custom-hover:hover { background-color: #d97706; }
+        .bg-orange-custom { background-color: #f97316; }
+        .hover\:bg-orange-custom-hover:hover { background-color: #ea580c; }
+        .bg-sky-custom { background-color: #0ea5e9; }
+        .hover\:bg-sky-custom-hover:hover { background-color: #0284c7; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen items-center justify-center p-2 sm:p-4">
 
     <header class="mb-4 text-center">
         <h1 class="text-3xl sm:text-4xl font-bold text-emerald-300 drop-shadow-lg">Blackjack Buddy</h1>
-        <p class="text-emerald-400 text-sm">Interactive Audio Demo</p>
+        <p class="text-emerald-400 text-sm">Simplified Audio Output Demo</p>
     </header>
 
-    <main class="bg-emerald-700 p-3 sm:p-6 rounded-xl shadow-2xl w-full max-w-3xl">
-        <div id="dealer-area" class="mb-6">
+    <main class="bg-emerald-700 p-3 sm:p-6 rounded-xl shadow-2xl w-full max-w-lg"> {/* Max width slightly reduced */}
+        <div id="dealer-area" class="mb-4">
             <div class="flex justify-between items-center mb-2">
-                <h2 class="text-xl font-semibold text-emerald-200">Dealer's Hand</h2>
-                <span id="dealer-score" class="text-xl font-bold text-emerald-100 bg-emerald-600 px-3 py-1 rounded-md shadow-sm">0</span>
+                <h2 class="text-lg font-semibold text-emerald-200">Dealer</h2>
+                <span id="dealer-score" class="text-lg font-bold text-emerald-100 bg-emerald-600 px-2 py-0.5 rounded-md shadow-sm">0</span>
             </div>
-            <div id="dealer-cards" class="flex space-x-2 h-[110px] items-center bg-emerald-800 p-3 rounded-lg shadow-inner min-h-[110px]">
-                </div>
+            <div id="dealer-cards" class="flex space-x-2 h-[110px] items-center bg-emerald-800 p-2 rounded-lg shadow-inner min-h-[110px]"></div>
         </div>
 
-        <div id="player-area" class="mb-6">
+        <div id="player-area" class="mb-4">
              <div class="flex justify-between items-center mb-2">
-                <h2 class="text-xl font-semibold text-emerald-200">Your Hand</h2>
-                <span id="player-score" class="text-xl font-bold text-emerald-100 bg-emerald-600 px-3 py-1 rounded-md shadow-sm">0</span>
+                <h2 class="text-lg font-semibold text-emerald-200">You</h2>
+                <span id="player-score" class="text-lg font-bold text-emerald-100 bg-emerald-600 px-2 py-0.5 rounded-md shadow-sm">0</span>
             </div>
-            <div id="player-cards" class="flex space-x-2 h-[110px] items-center bg-emerald-800 p-3 rounded-lg shadow-inner min-h-[110px]">
-                </div>
+            <div id="player-cards" class="flex space-x-2 h-[110px] items-center bg-emerald-800 p-2 rounded-lg shadow-inner min-h-[110px]"></div>
         </div>
 
-        <div id="message-area" class="mb-4 p-4 bg-emerald-600 rounded-lg shadow text-center min-h-[80px] flex flex-col justify-center items-center">
-            <p id="game-message" class="text-lg font-medium text-yellow-300"></p>
-            <p id="advice-message" class="text-sm text-emerald-100 mt-1"></p>
-            <button id="explain-advice-button" class="hidden mt-2 bg-sky-custom hover:bg-sky-custom-hover text-white text-xs font-semibold py-1 px-3 rounded-md shadow-sm" data-strategy="">
-                ✨ Explain Strategy
+        <div id="message-area" class="mb-4 p-3 bg-emerald-600 rounded-lg shadow text-center min-h-[70px] flex flex-col justify-center items-center">
+            <p id="game-message" class="text-base font-medium text-yellow-300"></p>
+            <p id="advice-message" class="text-xs text-emerald-100 mt-1"></p>
+            <button id="explain-advice-button" class="hidden mt-1 bg-sky-custom hover:bg-sky-custom-hover text-white text-xs font-semibold py-1 px-2 rounded-md shadow-sm" data-strategy="">
+                ✨ Explain
             </button>
         </div>
         
-        <div id="betting-area" class="mb-6 text-center p-4 bg-emerald-800 rounded-lg shadow-inner">
-            <div class="flex justify-around items-center mb-3">
-                <h3 class="text-md font-semibold text-emerald-200">Bet: <span class="text-yellow-300 text-lg font-bold">$<span id="current-bet">0</span></span></h3>
-                <h3 class="text-md font-semibold text-emerald-200">Chips: <span class="text-green-300 text-lg font-bold">$<span id="player-chips">100</span></span></h3>
+        <div id="betting-area" class="mb-4 text-center p-3 bg-emerald-800 rounded-lg shadow-inner">
+            <div class="flex justify-around items-center mb-2">
+                <h3 class="text-sm font-semibold text-emerald-200">Bet: <span class="text-yellow-300 text-base font-bold">$<span id="current-bet">0</span></span></h3>
+                <h3 class="text-sm font-semibold text-emerald-200">Chips: <span class="text-green-300 text-base font-bold">$<span id="player-chips">100</span></span></h3>
             </div>
-            <div id="chips-container" class="flex justify-center items-center flex-wrap space-x-1 sm:space-x-2 mb-3">
-                </div>
-             <button id="clear-bet-button" class="game-button bg-yellow-custom hover:bg-yellow-custom-hover text-sm px-4 py-2">Clear Bet</button>
+            <div id="chips-container" class="flex justify-center items-center flex-wrap space-x-1 sm:space-x-2 mb-2"></div>
+             <button id="clear-bet-button" class="game-button bg-yellow-custom hover:bg-yellow-custom-hover text-xs px-3 py-1.5">Clear Bet</button>
         </div>
 
-        <div id="action-buttons" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div id="action-buttons" class="grid grid-cols-3 gap-2">
             <button id="deal-button" class="game-button bg-green-custom hover:bg-green-custom-hover text-white">Deal</button>
             <button id="hit-button" class="game-button bg-blue-custom hover:bg-blue-custom-hover text-white" disabled>Hit</button>
             <button id="stand-button" class="game-button bg-red-custom hover:bg-red-custom-hover text-white" disabled>Stand</button>
-            <button id="speak-command-button" class="game-button bg-teal-custom hover:bg-teal-custom-hover text-white col-span-2 sm:col-span-1">🎤 Speak</button>
-            <button id="mute-button" class="game-button bg-orange-custom hover:bg-orange-custom-hover text-white col-span-2 sm:col-span-2">🔇 Mute Buddy</button>
+            <button id="mute-button" class="game-button bg-orange-custom hover:bg-orange-custom-hover text-white col-span-3 mt-2">🔇 Mute Buddy</button>
         </div>
     </main>
 
@@ -206,14 +153,12 @@
         </div>
     </div>
 
-    <footer class="mt-8 text-center text-emerald-400 text-xs">
-        <p>&copy; <span id="currentYear"></span> Blackjack Buddy. For entertainment purposes only.</p>
-        <p>Use Chrome for best audio experience.</p>
+    <footer class="mt-6 text-center text-emerald-400 text-xs">
+        <p>&copy; <span id="currentYear"></span> Blackjack Buddy. For entertainment only.</p>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // DOM Elements
             const dealerScoreEl = document.getElementById('dealer-score');
             const dealerCardsEl = document.getElementById('dealer-cards');
             const playerScoreEl = document.getElementById('player-score');
@@ -221,180 +166,59 @@
             const gameMessageEl = document.getElementById('game-message');
             const adviceMessageEl = document.getElementById('advice-message');
             const explainAdviceButton = document.getElementById('explain-advice-button');
-
             const dealButton = document.getElementById('deal-button');
             const hitButton = document.getElementById('hit-button');
             const standButton = document.getElementById('stand-button');
-            
             const currentBetEl = document.getElementById('current-bet');
             const playerChipsEl = document.getElementById('player-chips');
             const chipsContainer = document.getElementById('chips-container');
             const clearBetButton = document.getElementById('clear-bet-button');
-
-            const speakCommandButton = document.getElementById('speak-command-button');
             const muteButton = document.getElementById('mute-button');
-
             document.getElementById('currentYear').textContent = new Date().getFullYear();
-
             const geminiModal = document.getElementById('geminiModal');
             const geminiModalTitle = document.getElementById('geminiModalTitle');
             const geminiModalContent = document.getElementById('geminiModalContent');
             const modalCloseButton = document.getElementById('modalCloseButton');
 
-            // Game State
-            let deck = [];
-            let playerHand = [];
-            let dealerHand = [];
-            let playerScore = 0;
-            let dealerScore = 0;
-            let playerChips = 100;
-            let currentBet = 0;
-            let gameInProgress = false;
-            let dealerHiddenCard = null;
-
+            let deck = [], playerHand = [], dealerHand = [];
+            let playerScore = 0, dealerScore = 0, playerChips = 100, currentBet = 0;
+            let gameInProgress = false, dealerHiddenCard = null;
             const suits = ['♠', '♥', '♣', '♦'];
             const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-            const chipValues = [1, 5, 10, 25, 100]; // For dynamic chip generation
+            const chipValues = [1, 5, 10, 25, 100];
 
-            // --- Audio Interaction State & Functions ---
             let isMuted = false;
-            let speechRecognition;
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const speechSynthesis = window.speechSynthesis;
             let speechQueue = [];
             let isSpeaking = false;
 
             function speak(text, priority = false) {
                 if (isMuted || !speechSynthesis || !text) return;
-                
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'en-US';
-                // utterance.voice = speechSynthesis.getVoices().find(voice => voice.name === "Google US English"); // Example: specific voice
-
-                utterance.onend = () => {
-                    isSpeaking = false;
-                    processSpeechQueue();
-                };
-                utterance.onerror = (event) => {
-                    console.error("SpeechSynthesis Error:", event);
-                    isSpeaking = false;
-                    processSpeechQueue(); // Try next item even if current errors
-                };
+                utterance.onend = () => { isSpeaking = false; processSpeechQueue(); };
+                utterance.onerror = () => { isSpeaking = false; processSpeechQueue(); };
 
                 if (priority) {
-                    speechSynthesis.cancel(); // Clear current and pending utterances
-                    speechQueue = []; // Clear our custom queue
+                    speechSynthesis.cancel();
+                    speechQueue = []; 
                     isSpeaking = true;
                     speechSynthesis.speak(utterance);
                 } else {
                     speechQueue.push(utterance);
-                    if (!isSpeaking) {
-                        processSpeechQueue();
-                    }
+                    if (!isSpeaking) processSpeechQueue();
                 }
             }
 
             function processSpeechQueue() {
                 if (!isSpeaking && speechQueue.length > 0) {
                     isSpeaking = true;
-                    const utteranceToSpeak = speechQueue.shift();
-                    speechSynthesis.speak(utteranceToSpeak);
+                    speechSynthesis.speak(speechQueue.shift());
                 }
             }
 
-
-            function initializeSpeechRecognition() {
-                if (!SpeechRecognition) {
-                    speakCommandButton.disabled = true;
-                    speakCommandButton.innerHTML = "<span>⛔ Voice N/A</span>"; // More visual
-                    console.warn("Speech Recognition API not supported in this browser.");
-                    // speak("Sorry, voice commands are not supported in this browser."); // Initial welcome message covers this
-                    return;
-                }
-                speechRecognition = new SpeechRecognition();
-                speechRecognition.continuous = false; 
-                speechRecognition.lang = 'en-US';
-                speechRecognition.interimResults = false;
-                speechRecognition.maxAlternatives = 1;
-
-                speechRecognition.onstart = () => {
-                    speakCommandButton.innerHTML = "<span>👂 Listening...</span>";
-                    speakCommandButton.disabled = true;
-                };
-
-                speechRecognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript.trim().toLowerCase();
-                    console.log("Voice command received:", transcript);
-                    processVoiceCommand(transcript);
-                };
-
-                speechRecognition.onerror = (event) => {
-                    console.error("Speech recognition error:", event.error);
-                    let errorMessage = "Sorry, I didn't catch that.";
-                    if (event.error === 'no-speech') errorMessage = "I didn't hear anything. Try again?";
-                    else if (event.error === 'audio-capture') errorMessage = "Microphone error. Please check it.";
-                    else if (event.error === 'not-allowed') errorMessage = "Microphone access denied. Please enable it.";
-                    
-                    setGameMessage(errorMessage, false); // Don't speak this error, let the onend handler reset button
-                    speak(errorMessage, true); // Speak the error with priority
-                };
-
-                speechRecognition.onend = () => {
-                    speakCommandButton.innerHTML = "<span>🎤 Speak</span>";
-                    speakCommandButton.disabled = false;
-                };
-            }
-            
-            function processVoiceCommand(command) {
-                let processed = false;
-                if (gameInProgress && (command.startsWith("bet") || command.includes("clear bet"))) {
-                    speak("Cannot change bet or clear bet during a game.", true);
-                    return;
-                }
-                if (!gameInProgress && (command.includes("hit") || command.includes("stand") || command.includes("stay"))) {
-                     speak("Please deal cards first to hit or stand.", true);
-                     return;
-                }
-
-
-                if (command.includes("deal")) {
-                    if (!dealButton.disabled) { dealButton.click(); processed = true; } 
-                    else { speak("Cannot deal right now. Place a bet first.", true); }
-                } else if (command.includes("hit")) {
-                    if (!hitButton.disabled) { hitButton.click(); processed = true; }
-                    else { speak("Cannot hit right now.", true); }
-                } else if (command.includes("stand") || command.includes("stay")) {
-                     if (!standButton.disabled) { standButton.click(); processed = true; }
-                     else { speak("Cannot stand right now.", true); }
-                } else if (command.includes("clear bet")) {
-                    if (!clearBetButton.disabled) { clearBetButton.click(); processed = true; } // Speak is in the click handler
-                    else { speak("Cannot clear bet now.", true); }
-                } else if (command.startsWith("bet")) {
-                    const parts = command.split(" ");
-                    let amountStr = parts[parts.length - 1];
-                    let amount;
-
-                    const numberWords = { "one": 1, "five": 5, "ten": 10, "twenty-five": 25, "twenty five": 25, "one hundred": 100, "hundred": 100 };
-                    if (numberWords[amountStr]) amount = numberWords[amountStr];
-                    else amount = parseInt(amountStr);
-
-                    if (!isNaN(amount) && amount > 0) {
-                        const chipToClick = document.querySelector(`.chip[data-value="${amount}"]`);
-                        if (chipToClick) {
-                            if (playerChips >= amount) { chipToClick.click(); processed = true; } // Speak is in chip click
-                            else { speak(`Not enough chips to bet ${amount}. You have ${playerChips}.`, true); }
-                        } else { speak(`Sorry, I don't have a chip for ${amount}. Try 1, 5, 10, 25, or 100.`, true); }
-                    } else { speak("Sorry, I didn't understand the bet amount.", true); }
-                }
-
-                if (!processed && speechRecognition) { 
-                     speak("Didn't catch that. Try 'hit', 'stand', 'deal', or 'bet [amount]'.", true);
-                }
-            }
-
-            // --- Chip Generation ---
             function renderChips() {
-                chipsContainer.innerHTML = ''; // Clear existing chips
+                chipsContainer.innerHTML = '';
                 chipValues.forEach(value => {
                     const chipDiv = document.createElement('div');
                     chipDiv.classList.add('chip', `chip-${value}`);
@@ -404,13 +228,10 @@
                 });
             }
 
-
-            // --- Betting Functions ---
             function updateBetDisplay() {
                 currentBetEl.textContent = currentBet;
                 playerChipsEl.textContent = playerChips;
-                const canDeal = currentBet > 0 && !gameInProgress;
-                dealButton.disabled = !canDeal;
+                dealButton.disabled = !(currentBet > 0 && !gameInProgress);
             }
 
             chipsContainer.addEventListener('click', function(e) {
@@ -419,41 +240,26 @@
                 if (chip) {
                     const value = parseInt(chip.dataset.value);
                     if (playerChips >= value) {
-                        currentBet += value;
-                        playerChips -= value;
+                        currentBet += value; playerChips -= value;
                         updateBetDisplay();
                         speak(`Bet ${value}. Total bet ${currentBet}.`, false);
                     } else {
-                        setGameMessage("Not enough chips!", false);
-                        speak("Not enough chips!", true);
+                        setGameMessage("Not enough chips!", false); speak("Not enough chips!", true);
                     }
                 }
             });
 
             clearBetButton.addEventListener('click', function() {
-                if (gameInProgress) return;
-                if (currentBet > 0) {
-                    playerChips += currentBet;
-                    const clearedAmount = currentBet;
-                    currentBet = 0;
-                    updateBetDisplay();
-                    setGameMessage("Bet cleared. Place your bet to start!", false);
-                    speak(`Bet of ${clearedAmount} cleared. Place your new bet.`, true);
-                } else {
-                    speak("No bet to clear.", false);
-                }
+                if (gameInProgress || currentBet === 0) return;
+                playerChips += currentBet; const clearedAmount = currentBet; currentBet = 0;
+                updateBetDisplay();
+                setGameMessage("Bet cleared. Place new bet.", false);
+                speak(`Bet of ${clearedAmount} cleared.`, true);
             });
             
-            // --- Card and Deck Functions ---
             function createDeck() {
                 deck = [];
-                // Standard 52-card deck. Could be multiple decks for real Blackjack.
-                for (let suit of suits) {
-                    for (let value of values) {
-                        deck.push({ suit, value });
-                    }
-                }
-                 // console.log("Deck created with " + deck.length + " cards."); // For debugging
+                for (let suit of suits) for (let value of values) deck.push({ suit, value });
             }
 
             function shuffleDeck() {
@@ -461,94 +267,50 @@
                     const j = Math.floor(Math.random() * (i + 1));
                     [deck[i], deck[j]] = [deck[j], deck[i]];
                 }
-                // console.log("Deck shuffled."); // For debugging
             }
 
-            function dealCard(hand, targetElement) {
-                if (deck.length < 1) { 
-                    speak("Shuffling a new deck.", true);
-                    createDeck();
-                    shuffleDeck();
-                }
-                const card = deck.pop();
-                hand.push(card);
-                
-                // Add card to UI immediately if targetElement is provided (for visual dealing effect)
-                // This part is mostly handled by renderHands, but could be enhanced for animation
-                // console.log("Dealt:", card.value + card.suit, "to", hand === playerHand ? "Player" : "Dealer");
-                return card;
+            function dealCard(hand) {
+                if (deck.length < 1) { createDeck(); shuffleDeck(); speak("Shuffling new deck.", true); }
+                const card = deck.pop(); hand.push(card); return card;
             }
 
             function getCardValue(card) {
-                if (!card || !card.value) return 0; // Robustness
+                if (!card || !card.value) return 0;
                 if (['K', 'Q', 'J'].includes(card.value)) return 10;
                 if (card.value === 'A') return 11;
                 return parseInt(card.value);
             }
 
             function calculateScore(hand) {
-                let score = 0;
-                let aceCount = 0;
-                for (let card of hand) {
-                    score += getCardValue(card);
-                    if (card.value === 'A') aceCount++;
-                }
-                while (score > 21 && aceCount > 0) {
-                    score -= 10;
-                    aceCount--;
-                }
+                let score = 0, aceCount = 0;
+                for (let card of hand) { score += getCardValue(card); if (card.value === 'A') aceCount++; }
+                while (score > 21 && aceCount > 0) { score -= 10; aceCount--; }
                 return score;
             }
 
-            // --- UI Update Functions ---
             function createCardElement(card, isHidden = false) {
                 const cardDiv = document.createElement('div');
-                cardDiv.classList.add('card', 'transform', 'transition-all', 'duration-500', 'ease-out');
-                // For animation: start scaled down or off-screen
-                // cardDiv.style.transform = 'scale(0.5) rotateY(90deg)';
-
-                if (isHidden) {
-                    cardDiv.classList.add('hidden-card');
-                } else {
+                cardDiv.classList.add('card');
+                if (isHidden) cardDiv.classList.add('hidden-card');
+                else {
                     const suitColor = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
                     cardDiv.classList.add(suitColor);
-                    cardDiv.innerHTML = `
-                        <span class="card-value-top">${card.value}</span>
-                        <span class="card-suit">${card.suit}</span>
-                        <span class="card-value-bottom">${card.value}</span>
-                    `;
+                    cardDiv.innerHTML = `<span class="card-value-top">${card.value}</span><span class="card-suit">${card.suit}</span><span class="card-value-bottom">${card.value}</span>`;
                 }
-                // Trigger animation
-                // requestAnimationFrame(() => {
-                //    requestAnimationFrame(() => { // Double rAF for some browsers
-                //        cardDiv.style.transform = 'scale(1) rotateY(0deg)';
-                //    });
-                // });
                 return cardDiv;
             }
 
             function renderHands(revealDealerFull = false) {
-                playerCardsEl.innerHTML = ''; 
-                playerHand.forEach(card => playerCardsEl.appendChild(createCardElement(card)));
-                
-                dealerCardsEl.innerHTML = ''; 
+                playerCardsEl.innerHTML = ''; playerHand.forEach(card => playerCardsEl.appendChild(createCardElement(card)));
+                dealerCardsEl.innerHTML = '';
                 if (dealerHand.length > 0) {
                     if (gameInProgress && !revealDealerFull) {
-                        dealerCardsEl.appendChild(createCardElement(dealerHand[0])); 
-                        if (dealerHand.length > 1) {
-                            dealerCardsEl.appendChild(createCardElement(dealerHiddenCard, true)); 
-                        }
-                    } else { // Game ended or explicit reveal
-                        dealerHand.forEach(card => dealerCardsEl.appendChild(createCardElement(card)));
-                    }
+                        dealerCardsEl.appendChild(createCardElement(dealerHand[0]));
+                        if (dealerHand.length > 1) dealerCardsEl.appendChild(createCardElement(dealerHiddenCard, true));
+                    } else dealerHand.forEach(card => dealerCardsEl.appendChild(createCardElement(card)));
                 }
-
                 playerScoreEl.textContent = playerScore;
-                if (gameInProgress && dealerHand.length > 0 && !revealDealerFull) {
-                    dealerScoreEl.textContent = getCardValue(dealerHand[0]);
-                } else {
-                     dealerScoreEl.textContent = dealerScore;
-                }
+                dealerScoreEl.textContent = (gameInProgress && dealerHand.length > 0 && !revealDealerFull) ? getCardValue(dealerHand[0]) : dealerScore;
             }
             
             function setGameMessage(message, shouldSpeak = true) {
@@ -559,206 +321,108 @@
             function setAdviceMessage(advice, strategyKey = null, shouldSpeak = true) {
                 adviceMessageEl.textContent = advice;
                 if (advice && shouldSpeak) {
-                    // Speak only the core advice, remove scores for brevity
                     let speakableAdvice = advice.split("Consider")[0].replace(/Your score: \d+\. Dealer shows: \d+\. /i, "");
                     speak(speakableAdvice, false); 
                 }
-                
-                if (strategyKey && advice) { // Only show explain button if there's advice
-                    explainAdviceButton.classList.remove('hidden');
-                    explainAdviceButton.dataset.strategy = strategyKey;
-                } else {
-                    explainAdviceButton.classList.add('hidden');
-                }
+                if (strategyKey && advice) {
+                    explainAdviceButton.classList.remove('hidden'); explainAdviceButton.dataset.strategy = strategyKey;
+                } else explainAdviceButton.classList.add('hidden');
             }
 
             function toggleActionButtons(canHitStand, canStartNewGame) {
-                hitButton.disabled = !canHitStand;
-                standButton.disabled = !canHitStand;
-                dealButton.disabled = !canStartNewGame || currentBet === 0; 
-                
+                hitButton.disabled = !canHitStand; standButton.disabled = !canHitStand;
+                dealButton.disabled = !canStartNewGame || currentBet === 0;
                 chipsContainer.style.pointerEvents = canStartNewGame ? 'auto' : 'none';
                 chipsContainer.style.opacity = canStartNewGame ? '1' : '0.6';
                 clearBetButton.disabled = !canStartNewGame;
-                
-                // Voice command button should generally be enabled if API is available
-                speakCommandButton.disabled = !SpeechRecognition; 
-                if (!SpeechRecognition) speakCommandButton.innerHTML = "<span>⛔ Voice N/A</span>";
             }
 
-            // --- Game Logic Functions ---
             function startGame() {
-                if (currentBet === 0) {
-                    setGameMessage("Please place a bet first!"); 
-                    return;
-                }
-                gameInProgress = true;
-                setAdviceMessage("", null, false); // Clear old advice
-                createDeck();
-                shuffleDeck();
-                playerHand = [];
-                dealerHand = [];
-                
-                dealCard(playerHand);
-                dealerHiddenCard = dealCard(dealerHand); // This is the actual card object
-                dealCard(playerHand);
-                dealCard(dealerHand); 
-
-                playerScore = calculateScore(playerHand);
-                dealerScore = calculateScore(dealerHand); // Full dealer score for internal logic
-
-                renderHands();
-                setGameMessage("Your turn!", true);
+                if (currentBet === 0) { setGameMessage("Please place a bet first!"); return; }
+                gameInProgress = true; setAdviceMessage("", null, false);
+                createDeck(); shuffleDeck(); playerHand = []; dealerHand = [];
+                dealCard(playerHand); dealerHiddenCard = dealCard(dealerHand);
+                dealCard(playerHand); dealCard(dealerHand);
+                playerScore = calculateScore(playerHand); dealerScore = calculateScore(dealerHand);
+                renderHands(); setGameMessage("Your turn!", true);
                 toggleActionButtons(true, false);
-                
-                // Basic assertion for debugging
-                console.assert(playerHand.length === 2, "Player should have 2 cards at start.");
-                console.assert(dealerHand.length === 2, "Dealer should have 2 cards at start.");
-
                 checkBlackjack(); 
-                if (gameInProgress) { 
-                    getAndDisplayAdvice(); 
-                }
+                if (gameInProgress) getAndDisplayAdvice();
             }
+
+            function revealAllCardsAndFinalScore() { renderHands(true); }
 
             function checkBlackjack() {
-                const playerHasBlackjack = playerScore === 21 && playerHand.length === 2;
-                const dealerHasBlackjack = dealerScore === 21 && dealerHand.length === 2;
-
-                if (playerHasBlackjack) {
-                    revealDealerCardAndScore(true); // Reveal dealer's hand for Blackjack comparison
-                    if (dealerHasBlackjack) {
-                        setGameMessage("Push! Both have Blackjack.", true);
-                        playerChips += currentBet; 
-                        endHand();
-                    } else {
-                        setGameMessage("Blackjack! You win 1.5x your bet!", true);
-                        playerChips += currentBet + Math.floor(currentBet * 1.5); 
-                        endHand();
-                    }
-                } else if (dealerHasBlackjack) {
-                     setGameMessage("Dealer Blackjack! You lose.", true);
-                     revealDealerCardAndScore(true);
-                     endHand(false); 
+                const playerHasBj = playerScore === 21 && playerHand.length === 2;
+                const dealerHasBj = dealerScore === 21 && dealerHand.length === 2;
+                if (playerHasBj || dealerHasBj) {
+                    revealAllCardsAndFinalScore();
+                    if (playerHasBj && dealerHasBj) { setGameMessage("Push! Both Blackjack.", true); playerChips += currentBet; }
+                    else if (playerHasBj) { setGameMessage("Blackjack! You win 1.5x!", true); playerChips += currentBet + Math.floor(currentBet * 1.5); }
+                    else { setGameMessage("Dealer Blackjack! You lose.", true); } // Player loses bet (already deducted)
+                    endHand();
                 }
             }
             
             function playerHit() {
                 if (!gameInProgress) return;
-                dealCard(playerHand);
-                playerScore = calculateScore(playerHand);
-                speak(`You hit. Your score is ${playerScore}.`, false);
-                renderHands();
-
-                if (playerScore > 21) {
-                    setGameMessage("Bust! You lose.", true);
-                    setAdviceMessage("", null, false);
-                    endHand(false);
-                } else if (playerScore === 21) {
-                    setGameMessage("You have 21! Standing.", true);
-                    setAdviceMessage("", null, false);
-                    playerStand(); // Auto-stand at 21
-                } else {
-                    getAndDisplayAdvice();
-                }
+                dealCard(playerHand); playerScore = calculateScore(playerHand);
+                speak(`You hit. Score: ${playerScore}.`, false); renderHands();
+                if (playerScore > 21) { setGameMessage("Bust! You lose.", true); setAdviceMessage("", null, false); endHand(false); }
+                else if (playerScore === 21) { setGameMessage("You have 21! Standing.", true); setAdviceMessage("", null, false); playerStand(); }
+                else getAndDisplayAdvice();
             }
 
             function playerStand() {
                 if (!gameInProgress) return;
-                setGameMessage("You stand. Dealer's turn.", true);
-                setAdviceMessage("", null, false);
-                toggleActionButtons(false, false); 
-                dealerTurn();
-            }
-
-            function revealDealerCardAndScore(isEndOfHand = false) {
-                renderHands(true); // Force reveal of dealer's full hand
-                dealerScoreEl.textContent = dealerScore;
+                setGameMessage("You stand. Dealer's turn.", true); setAdviceMessage("", null, false);
+                toggleActionButtons(false, false); dealerTurn();
             }
 
             async function dealerTurn() {
-                revealDealerCardAndScore(true);
-                speak(`Dealer's hidden card was ${dealerHand[1].value} of ${dealerHand[1].suit}. Dealer score is ${dealerScore}.`, true);
+                revealAllCardsAndFinalScore();
+                speak(`Dealer shows ${dealerHand[1].value}. Score: ${dealerScore}.`, true);
+                await new Promise(resolve => setTimeout(resolve, isMuted ? 200 : 1500));
 
-                await new Promise(resolve => setTimeout(resolve, isMuted ? 300 : 1800)); // Delay for speech
-
-                while (dealerScore < 17 && playerScore <= 21) { 
-                    setGameMessage("Dealer hits...", false); // Don't speak this, next message will announce hit
-                    await new Promise(resolve => setTimeout(resolve, isMuted ? 300 : 1000)); 
-
-                    dealCard(dealerHand);
-                    dealerScore = calculateScore(dealerHand);
-                    revealDealerCardAndScore(true); 
-                    speak(`Dealer hits. Dealer score is ${dealerScore}.`, true);
-                    await new Promise(resolve => setTimeout(resolve, isMuted ? 300 : 1800));
+                while (dealerScore < 17 && playerScore <= 21) {
+                    await new Promise(resolve => setTimeout(resolve, isMuted ? 200 : 800));
+                    dealCard(dealerHand); dealerScore = calculateScore(dealerHand);
+                    revealAllCardsAndFinalScore(); 
+                    speak(`Dealer hits. Score: ${dealerScore}.`, true);
+                    await new Promise(resolve => setTimeout(resolve, isMuted ? 200 : 1500));
                 }
 
-                // Determine outcome
-                if (dealerScore > 21) {
-                    setGameMessage("Dealer busts! You win!", true);
-                    playerChips += currentBet * 2;
-                } else if (dealerScore > playerScore) { // playerScore is not > 21 because that's handled in playerHit
-                    setGameMessage(`Dealer stands with ${dealerScore}. Dealer wins.`, true);
-                } else if (playerScore > dealerScore) {
-                    setGameMessage(`Dealer stands with ${dealerScore}. You win!`, true);
-                    playerChips += currentBet * 2;
-                } else { // playerScore === dealerScore
-                    setGameMessage(`Dealer stands with ${dealerScore}. Push!`, true);
-                    playerChips += currentBet; 
-                }
+                if (dealerScore > 21) { setGameMessage("Dealer busts! You win!", true); playerChips += currentBet * 2; }
+                else if (dealerScore > playerScore) { setGameMessage(`Dealer stands. Dealer wins.`, true); }
+                else if (playerScore > dealerScore) { setGameMessage(`Dealer stands. You win!`, true); playerChips += currentBet * 2; }
+                else { setGameMessage(`Dealer stands. Push!`, true); playerChips += currentBet; }
                 endHand(false); 
             }
             
             function endHand(resetBetAndMessage = true) { 
-                gameInProgress = false;
-                toggleActionButtons(false, true); 
-                dealerHiddenCard = null; 
-                
-                revealDealerCardAndScore(true); 
-
-                updateBetDisplay(); 
-                if (playerChips <= 0 && currentBet === 0) { // Check if player is truly out of money
-                    setGameMessage("Game Over! No more chips. Refresh to play again.", true);
-                    speak("Game Over. You are out of chips. Please refresh the page to play again.", true);
-                    dealButton.disabled = true;
-                    clearBetButton.disabled = true;
-                    chipsContainer.style.pointerEvents = 'none';
-                    chipsContainer.style.opacity = '0.6';
-                    if (SpeechRecognition) speakCommandButton.disabled = true;
+                gameInProgress = false; toggleActionButtons(false, true); 
+                dealerHiddenCard = null; revealAllCardsAndFinalScore(); updateBetDisplay(); 
+                if (playerChips <= 0 && currentBet === 0) {
+                    setGameMessage("Game Over! No more chips. Refresh.", true);
+                    speak("Game Over. Out of chips.", true);
+                    dealButton.disabled = true; clearBetButton.disabled = true;
+                    chipsContainer.style.pointerEvents = 'none'; chipsContainer.style.opacity = '0.6';
                 } else {
-                    // Message already set by win/loss logic. Next action will clear it or set "Place bet"
-                    // speak("Round over. Place your bet for the next round.", false); // Can be too chatty
+                    // speak("Round over. Place new bet.", false); // Can be chatty
                 }
             }
 
-            // --- Basic Strategy Advice ---
             function getBasicStrategyAdvice() {
-                if (playerHand.length < 2 || dealerHand.length < 1 || !gameInProgress || playerScore > 21) {
-                    return { advice: "", strategyKey: null };
-                }
-
+                if (playerHand.length < 2 || dealerHand.length < 1 || !gameInProgress || playerScore > 21) return { advice: "", strategyKey: null };
                 const dealerUpCard = dealerHand[0];
-                if (!dealerUpCard) return { advice: "", strategyKey: null }; // Should not happen if dealerHand[0] exists
+                if (!dealerUpCard) return { advice: "", strategyKey: null };
                 const dealerUpCardValue = getCardValue(dealerUpCard);
-                
-                let advice = `Your score: ${playerScore}. Dealer shows: ${dealerUpCardValue}. `;
+                let advice = `Your ${playerScore}, Dealer shows ${dealerUpCardValue}. `; // Shortened
                 let strategyKey = "HitOrStand"; 
-
                 if (playerScore <= 11) advice += "Hit.";
                 else if (playerScore === 12) advice += (dealerUpCardValue >= 4 && dealerUpCardValue <= 6) ? "Stand." : "Hit.";
                 else if (playerScore >= 13 && playerScore <= 16) advice += (dealerUpCardValue >= 2 && dealerUpCardValue <= 6) ? "Stand." : "Hit.";
-                else advice += "Stand."; // 17-21
-                
-                // These are just text additions, no buttons implemented for them yet.
-                if (playerHand.length === 2 && (playerScore === 9 || playerScore === 10 || playerScore === 11)) {
-                     advice += " Consider Doubling Down.";
-                     // strategyKey = "DoubleDown"; 
-                }
-                if (playerHand.length === 2 && playerHand[0].value === playerHand[1].value && getCardValue(playerHand[0]) !== 10) {
-                    advice += " Consider Splitting.";
-                     // strategyKey = "SplitPairs"; 
-                }
-                
+                else advice += "Stand.";
                 return { advice, strategyKey };
             }
 
@@ -767,132 +431,53 @@
                 setAdviceMessage(advice, strategyKey, true); 
             }
 
-            // Event Listeners
             dealButton.addEventListener('click', startGame);
             hitButton.addEventListener('click', playerHit);
             standButton.addEventListener('click', playerStand);
             
             explainAdviceButton.addEventListener('click', function() {
-                const strategy = this.dataset.strategy;
-                if (strategy) fetchStrategyExplanation(strategy);
+                if (this.dataset.strategy) fetchStrategyExplanation(this.dataset.strategy);
             });
 
             muteButton.addEventListener('click', () => {
                 isMuted = !isMuted;
                 muteButton.innerHTML = isMuted ? "<span>🔊 Unmute</span>" : "<span>🔇 Mute Buddy</span>";
-                if (isMuted && speechSynthesis.speaking) {
-                    speechSynthesis.cancel();
-                    speechQueue = []; // Clear queue as well
-                    isSpeaking = false;
-                }
+                if (isMuted && speechSynthesis.speaking) { speechSynthesis.cancel(); speechQueue = []; isSpeaking = false; }
                 speak(isMuted ? "Audio muted." : "Audio enabled.", true);
             });
 
-            speakCommandButton.addEventListener('click', () => {
-                if (speechRecognition && !speakCommandButton.disabled) {
-                     try {
-                        speechRecognition.start();
-                    } catch (e) {
-                        console.warn("Speech recognition start failed (possibly already active):", e.message);
-                        // Reset button state if it got stuck
-                        speakCommandButton.innerHTML = "<span>🎤 Speak</span>";
-                        speakCommandButton.disabled = false;
-                    }
-                } else if (!SpeechRecognition) {
-                     setGameMessage("Voice commands are not supported by your browser.", true);
-                }
-            });
-
-
-            // --- Gemini API Modal Functions ---
             async function fetchStrategyExplanation(strategyType) {
-                geminiModalContent.innerHTML = '<div class="loader"></div><p class="text-center text-gray-600">Please wait, loading information...</p>';
+                geminiModalContent.innerHTML = '<div class="loader"></div><p class="text-center text-gray-600">Loading explanation...</p>';
                 geminiModal.style.display = "block";
                 speak("Fetching strategy explanation.", false);
-
-                const apiKey = ""; // Provided by Canvas environment
-                // Using gemini-2.0-flash as per instructions, ensure it's suitable for the prompt length/complexity.
+                const apiKey = ""; // Handled by Canvas or your environment
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`; 
-                
-                let strategyNameEnglish = "";
-                let prompt = "";
-
-                switch(strategyType) {
-                    case "HitOrStand":
-                        strategyNameEnglish = "Hit or Stand";
-                        prompt = `Explain the basic strategy for 'Hit or Stand' in Blackjack in a friendly, simple English. Focus on when a player should hit versus when they should stand, considering their hand total and the dealer's upcard. Provide a few common examples. Format the explanation for web display using paragraphs (use \\n\\n for paragraph breaks, and \\n for line breaks if needed within a paragraph). Use **bold** for emphasis where appropriate.`;
-                        break;
-                    // Add other cases if DoubleDown/SplitPairs buttons are implemented and need explanation
-                    default:
-                        geminiModalContent.innerHTML = "<p>Sorry, no information available for this strategy.</p>";
-                        speak("Sorry, no explanation available for this strategy.", true);
-                        return;
-                }
-
-                geminiModalTitle.textContent = `Explanation of ${strategyNameEnglish} ✨`;
+                let prompt = `Explain Blackjack strategy for '${strategyType === "HitOrStand" ? "Hit or Stand decisions based on player total and dealer upcard" : strategyType}' in simple terms. Use paragraphs.`;
 
                 try {
-                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] }) });
+                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
                     const result = await response.json();
-                    
                     if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
-                        let text = result.candidates[0].content.parts[0].text;
-                        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); 
-                        text = text.replace(/\\n\\n/g, '</p><p>'); 
-                        text = text.replace(/\\n/g, '<br>'); 
-                        geminiModalContent.innerHTML = `<p>${text}</p>`; 
-                        speak("Here's the explanation.", false);
-                    } else {
-                         console.error("Gemini API response error:", result);
-                         geminiModalContent.innerHTML = "<p>Sorry, unable to retrieve explanation. The response might be empty or malformed (e.g. safety block). Please try again later.</p>";
-                         speak("Sorry, I couldn't get the explanation.", true);
-                    }
+                        let text = result.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+                        geminiModalContent.innerHTML = `<p>${text}</p>`; speak("Explanation loaded.", false);
+                    } else { throw new Error("No content in API response."); }
                 } catch (error) {
                     console.error("Gemini API Fetch Error:", error);
-                    geminiModalContent.innerHTML = `<p>An error occurred while loading information: ${error.message}. Please check your internet connection and try again.</p>`;
+                    geminiModalContent.innerHTML = `<p>Error loading explanation: ${error.message}.</p>`;
                     speak("Error fetching explanation.", true);
                 }
             }
 
-            if(modalCloseButton) {
-                modalCloseButton.onclick = function() { geminiModal.style.display = "none"; }
-            }
-            window.onclick = function(event) {
-                if (event.target == geminiModal) { geminiModal.style.display = "none"; }
-            }
+            if(modalCloseButton) modalCloseButton.onclick = () => geminiModal.style.display = "none";
+            window.onclick = event => { if (event.target == geminiModal) geminiModal.style.display = "none"; };
 
-            // --- Initial Setup ---
-            renderChips(); // Dynamically create chip buttons
-            updateBetDisplay();
-            toggleActionButtons(false, true); 
-            setGameMessage("Place your bet to start!", false); 
-            
-            // Welcome message and API checks
-            let welcomeMessage = "Welcome to Blackjack Buddy! ";
-            if (!speechSynthesis) {
-                welcomeMessage += "Speech output is not supported in this browser. ";
-                muteButton.disabled = true;
-                muteButton.innerHTML = "<span>⛔ Audio N/A</span>";
-            }
-            if (!SpeechRecognition) {
-                welcomeMessage += "Voice commands are not supported. ";
-                // speakCommandButton already updated by initializeSpeechRecognition
-            }
-            if (speechSynthesis && SpeechRecognition) {
-                welcomeMessage += "Place your bet using chips or voice commands like 'bet 5'. Then say 'deal'.";
-            }
-            speak(welcomeMessage, true);
-
-
-            if (SpeechRecognition) initializeSpeechRecognition();
-            
+            renderChips(); updateBetDisplay(); toggleActionButtons(false, true); 
+            setGameMessage("Place your bet to start!", false);
+            let welcomeMsg = "Welcome! ";
+            if (!speechSynthesis) { welcomeMsg += "Speech output not supported. "; muteButton.disabled = true; muteButton.innerHTML = "<span>⛔ Audio N/A</span>"; }
+            else { welcomeMsg += "Place bet, then Deal."; }
+            speak(welcomeMsg, true);
         });
     </script>
 </body>
